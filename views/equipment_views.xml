@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ekipman Liste Görünümü -->
+    <record id="view_custody_equipment_tree" model="ir.ui.view">
+        <field name="name">custody.equipment.tree</field>
+        <field name="model">custody.equipment</field>
+        <field name="arch" type="xml">
+            <list string="Ekipmanlar">
+                <field name="name"/>
+                <field name="serial_number"/>
+                <field name="category"/>
+                <field name="status" widget="badge" 
+                       decoration-success="status == 'available'" 
+                       decoration-info="status == 'reserved'"
+                       decoration-warning="status == 'assigned'" 
+                       decoration-danger="status == 'maintenance'"/>
+                <field name="current_assignee_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Ekipman Arama ve Gruplama (Kaç adet var, kaçı zimmette görmek için) -->
+    <record id="view_custody_equipment_search" model="ir.ui.view">
+        <field name="name">custody.equipment.search</field>
+        <field name="model">custody.equipment</field>
+        <field name="arch" type="xml">
+            <search string="Ekipman Ara">
+                <field name="name"/>
+                <field name="serial_number"/>
+                <field name="current_assignee_id"/>
+                <separator/>
+                <filter string="Müsait Olanlar" name="available" domain="[('status', '=', 'available')]"/>
+                <filter string="Zimmette Olanlar" name="assigned" domain="[('status', '=', 'assigned')]"/>
+                <filter string="Rezerve Olanlar" name="reserved" domain="[('status', '=', 'reserved')]"/>
+                <filter string="Bakımda / Arızalı Olanlar" name="maintenance" domain="[('status', '=', 'maintenance')]"/>
+                <group expand="1" string="Grupla (Özet &amp; Sayım)">
+                    <filter string="Kategoriye Göre Grupla" name="group_by_category" context="{'group_by':'category'}"/>
+                    <filter string="Duruma Göre Grupla" name="group_by_status" context="{'group_by':'status'}"/>
+                    <filter string="Zimmetliye Göre Grupla" name="group_by_assignee" context="{'group_by':'current_assignee_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Ekipman Form Görünümü (Header, Bakımı Tamamla Butonu ve Smart Button ile) -->
+    <record id="view_custody_equipment_form" model="ir.ui.view">
+        <field name="name">custody.equipment.form</field>
+        <field name="model">custody.equipment</field>
+        <field name="arch" type="xml">
+            <form string="Ekipman">
+                <header>
+                    <button name="action_set_available" 
+                            string="Bakımı Tamamla (Müsait Yap)" 
+                            type="object" 
+                            class="btn-success" 
+                            groups="equipment_custody.group_custody_manager"
+                            invisible="status != 'maintenance'"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_requests" type="object" class="oe_stat_button" icon="fa-tasks">
+                            <field name="request_count" widget="statinfo" string="Talepler"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="Örn: Rigol DS1054Z Osiloskop"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="serial_number"/>
+                            <field name="category"/>
+                        </group>
+                        <group>
+                            <field name="status" widget="badge"
+                                   decoration-success="status == 'available'" 
+                                   decoration-info="status == 'reserved'"
+                                   decoration-warning="status == 'assigned'" 
+                                   decoration-danger="status == 'maintenance'"/>
+                            <field name="current_assignee_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Zimmet Geçmişi ve Talepler">
+                            <field name="request_ids" readonly="1">
+                                <list string="Talepler">
+                                    <field name="name"/>
+                                    <field name="employee_id"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="return_date"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notlar">
+                            <field name="note" placeholder="Cihaz özellikleri, aksesuar durumu vb..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_custody_equipment" model="ir.actions.act_window">
+        <field name="name">Ekipmanlar</field>
+        <field name="res_model">custody.equipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_by_category': 1}</field>
+    </record>
+</odoo>

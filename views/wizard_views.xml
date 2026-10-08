@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_custody_return_wizard_form" model="ir.ui.view">
+        <field name="name">custody.return.wizard.form</field>
+        <field name="model">custody.return.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Ekipman İade ve Kondisyon">
+                <group>
+                    <field name="request_id" invisible="1"/>
+                    <field name="equipment_id"/>
+                    <field name="return_condition" widget="radio"/>
+                    <field name="damage_note" placeholder="Hasar veya arıza varsa detaylandırın..." 
+                           invisible="return_condition == 'intact'"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_return" string="İadeyi Tamamla" type="object" class="btn-primary"/>
+                    <button string="İptal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

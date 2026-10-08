@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Kategori Tanımı -->
+    <record id="module_category_equipment_custody" model="ir.module.category">
+        <field name="name">Ekipman Zimmet Takip</field>
+        <field name="description">Ekipman ve zimmet süreçleri yetkilendirme grubu</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Mühendis Grubu (Standart Kullanıcı) -->
+    <record id="group_custody_user" model="res.groups">
+        <field name="name">Mühendis (Kullanıcı)</field>
+        <field name="category_id" ref="module_category_equipment_custody"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Yetkili / Yönetici Grubu -->
+    <record id="group_custody_manager" model="res.groups">
+        <field name="name">Yetkili (Yönetici)</field>
+        <field name="category_id" ref="module_category_equipment_custody"/>
+        <field name="implied_ids" eval="[(4, ref('group_custody_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Record Rule: Mühendisler sadece kendi taleplerini düzenleyebilsin (veya görüntülesin) -->
+    <record id="rule_custody_request_user" model="ir.rule">
+        <field name="name">Kullanıcı Sadece Kendi Taleplerini Görür</field>
+        <field name="model_id" ref="model_custody_request"/>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_custody_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <!-- Record Rule: Yöneticiler tüm talepleri görür ve yönetir -->
+    <record id="rule_custody_request_manager" model="ir.rule">
+        <field name="name">Yönetici Tüm Talepleri Görür</field>
+        <field name="model_id" ref="model_custody_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_custody_manager'))]"/>
+    </record>
+</odoo>

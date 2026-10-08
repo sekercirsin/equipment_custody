@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Talep Liste Görünümü (Gecikenler Kırmızı) -->
+    <record id="view_custody_request_tree" model="ir.ui.view">
+        <field name="name">custody.request.tree</field>
+        <field name="model">custody.request</field>
+        <field name="arch" type="xml">
+            <list string="Zimmet Talepleri" decoration-danger="is_overdue == True">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="equipment_id"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="return_date"/>
+                <field name="is_overdue" invisible="1"/>
+                <field name="state" widget="badge" 
+                       decoration-info="state == 'draft'" 
+                       decoration-warning="state == 'to_approve'" 
+                       decoration-primary="state == 'approved'" 
+                       decoration-success="state == 'delivered'" 
+                       decoration-muted="state == 'returned'" 
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Takvim Görünümü (Calendar) -->
+    <record id="view_custody_request_calendar" model="ir.ui.view">
+        <field name="name">custody.request.calendar</field>
+        <field name="model">custody.request</field>
+        <field name="arch" type="xml">
+            <calendar string="Ekipman Tahsis Takvimi" 
+                      date_start="start_date" 
+                      date_stop="end_date" 
+                      color="equipment_id" 
+                      quick_create="0" 
+                      mode="month">
+                <field name="equipment_id"/>
+                <field name="employee_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Talep Form Görünümü -->
+    <record id="view_custody_request_form" model="ir.ui.view">
+        <field name="name">custody.request.form</field>
+        <field name="model">custody.request</field>
+        <field name="arch" type="xml">
+            <form string="Zimmet Talebi">
+                <header>
+                    <button name="action_submit" string="Onaya Gönder" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Onayla" type="object" class="oe_highlight" groups="equipment_custody.group_custody_manager" invisible="state != 'to_approve'"/>
+                    <button name="action_deliver" string="Teslim Et" type="object" class="btn-success" groups="equipment_custody.group_custody_manager" invisible="state != 'approved'"/>
+                    <button name="action_return" string="İade Al" type="object" class="btn-primary" groups="equipment_custody.group_custody_manager" invisible="state != 'delivered'"/>
+                    <button name="action_reject" string="Reddet" type="object" class="btn-danger" groups="equipment_custody.group_custody_manager" invisible="state != 'to_approve'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,to_approve,approved,delivered,returned"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="state != 'draft'"/>
+                            <field name="equipment_id" readonly="state != 'draft'"/>
+                            <field name="is_overdue" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="start_date" readonly="state != 'draft'"/>
+                            <field name="end_date" readonly="state != 'draft'"/>
+                            <field name="return_date" readonly="1" invisible="state != 'returned'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Kullanım Amacı">
+                            <field name="purpose" placeholder="Ekipmana neden ihtiyaç duyulduğunu açıklayın..." readonly="state not in ['draft', 'to_approve']"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Arama ve Filtreler -->
+    <record id="view_custody_request_search" model="ir.ui.view">
+        <field name="name">custody.request.search</field>
+        <field name="model">custody.request</field>
+        <field name="arch" type="xml">
+            <search string="Talepleri Ara">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="equipment_id"/>
+                <separator/>
+                <filter string="Geciken Zimmetler" name="overdue" domain="[('is_overdue', '=', True)]"/>
+                <filter string="Onay Bekleyenler" name="to_approve" domain="[('state', '=', 'to_approve')]"/>
+                <filter string="Teslim Edilenler (Aktif)" name="delivered" domain="[('state', '=', 'delivered')]"/>
+                <group expand="0" string="Grupla">
+                    <filter string="Ekipman" name="group_by_equipment" context="{'group_by':'equipment_id'}"/>
+                    <filter string="Mühendis" name="group_by_employee" context="{'group_by':'employee_id'}"/>
+                    <filter string="Durum" name="group_by_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action (calendar eklendi) -->
+    <record id="action_custody_request" model="ir.actions.act_window">
+        <field name="name">Zimmet Talepleri</field>
+        <field name="res_model">custody.request</field>
+        <field name="view_mode">list,calendar,form</field>
+    </record>
+</odoo>

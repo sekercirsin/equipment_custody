@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Rapor Tanımı / Menü Aksiyonu -->
+    <record id="action_report_custody_handover" model="ir.actions.report">
+        <field name="name">Zimmet Teslim Tutanağı</field>
+        <field name="model">custody.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">equipment_custody.report_custody_handover_document</field>
+        <field name="report_file">equipment_custody.report_custody_handover_document</field>
+        <field name="binding_model_id" ref="model_custody_request"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- QWeb PDF Şablonu -->
+    <template id="report_custody_handover_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 1.6;">
+                        <div class="text-center" style="margin-bottom: 25px;">
+                            <h2 style="font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px;">
+                                EKİPMAN ZİMMET VE TESLİM TESELLÜM TUTANAĞI
+                            </h2>
+                            <p style="color: #666; font-size: 12px;">Belge No: <t t-esc="doc.name"/> | Düzenleme Tarihi: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/></p>
+                        </div>
+
+                        <p>
+                            Aşağıda detayları belirtilen şirket demirbaşı, ilgili mühendislik/laboratuvar çalışmaları kapsamında kullanılmak üzere çalışır ve eksiksiz vaziyette teslim edilmiştir.
+                        </p>
+
+                        <h4 style="border-left: 4px solid #0056b3; padding-left: 8px; margin-top: 20px;">1. Ekipman ve Tahsis Bilgileri</h4>
+                        <table class="table table-bordered" style="width: 100%; margin-top: 10px; margin-bottom: 20px;">
+                            <tr>
+                                <th style="width: 25%; background-color: #f8f9fa;">Ekipman Adı:</th>
+                                <td style="width: 25%;"><t t-esc="doc.equipment_id.name"/></td>
+                                <th style="width: 25%; background-color: #f8f9fa;">Seri Numarası:</th>
+                                <td style="width: 25%;"><t t-esc="doc.equipment_id.serial_number"/></td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f8f9fa;">Kategori:</th>
+                                <td><t t-esc="dict(doc.equipment_id._fields['category'].selection).get(doc.equipment_id.category)"/></td>
+                                <th style="background-color: #f8f9fa;">Kullanım Amacı:</th>
+                                <td><t t-esc="doc.purpose or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f8f9fa;">Başlangıç Tarihi:</th>
+                                <td><t t-esc="doc.start_date"/></td>
+                                <th style="background-color: #f8f9fa;">Planlanan İade Tarihi:</th>
+                                <td><t t-esc="doc.end_date"/></td>
+                            </tr>
+                        </table>
+
+                        <h4 style="border-left: 4px solid #0056b3; padding-left: 8px;">2. Taahhütname</h4>
+                        <p style="text-align: justify; font-size: 11px; color: #444;">
+                            Ekipmanı teslim alan personel, cihazı teknik talimatlara uygun şekilde kullanmayı, tahsis süresi sonunda eksiksiz ve çalışır vaziyette iade etmeyi; olası donanımsal arıza veya fiziksel hasar durumunda birim amirine gecikmeksizin bilgi vermeyi kabul ve taahhüt eder.
+                        </p>
+
+                        <div style="margin-top: 60px;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 50%; text-align: center;">
+                                        <strong>TESLİM EDEN (YÖNETİCİ / YETKİLİ)</strong><br/><br/>
+                                        <span>İmza: ...........................................</span><br/><br/>
+                                        <span>Tarih: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/></span>
+                                    </td>
+                                    <td style="width: 50%; text-align: center;">
+                                        <strong>TESLİM ALAN (MÜHENDİS)</strong><br/><br/>
+                                        <span t-esc="doc.employee_id.name"/><br/>
+                                        <span>İmza: ...........................................</span><br/><br/>
+                                        <span>Tarih: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

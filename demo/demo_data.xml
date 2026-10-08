@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Demo Ekipmanlar -->
+        <record id="demo_equipment_oscilloscope" model="custody.equipment">
+            <field name="name">Rigol DS1054Z Dijital Osiloskop</field>
+            <field name="serial_number">OSC-2024-001</field>
+            <field name="category">oscilloscope</field>
+            <field name="note">Laboratuvar 1 masaüstü osiloskobu. 4 Kanal 50MHz.</field>
+        </record>
+
+        <record id="demo_equipment_laptop" model="custody.equipment">
+            <field name="name">Dell Precision 5570 Mühendislik Laptopu</field>
+            <field name="serial_number">LPT-2023-882</field>
+            <field name="category">laptop</field>
+            <field name="note">Simülasyon ve saha testleri için ayrılmış laptop.</field>
+        </record>
+
+        <record id="demo_equipment_multimeter" model="custody.equipment">
+            <field name="name">Fluke 87V Endüstriyel Multimetre</field>
+            <field name="serial_number">FLK-9921-X</field>
+            <field name="category">measurement</field>
+            <field name="note">Hassas ölçüm cihazı.</field>
+        </record>
+
+        <!-- Otomatik Sıralayıcı (Sequence) -->
+        <record id="seq_custody_request" model="ir.sequence">
+            <field name="name">Zimmet Talep Numaratörü</field>
+            <field name="code">custody.request</field>
+            <field name="prefix">ZMM/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

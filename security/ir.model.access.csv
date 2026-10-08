@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_custody_equipment_user,custody.equipment.user,model_custody_equipment,group_custody_user,1,0,0,0
+access_custody_equipment_manager,custody.equipment.manager,model_custody_equipment,group_custody_manager,1,1,1,1
+access_custody_request_user,custody.request.user,model_custody_request,group_custody_user,1,1,1,0
+access_custody_request_manager,custody.request.manager,model_custody_request,group_custody_manager,1,1,1,1
+access_custody_return_wizard_manager,custody.return.wizard.manager,model_custody_return_wizard,group_custody_manager,1,1,1,1

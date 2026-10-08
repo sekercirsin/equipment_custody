@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_custody_root" name="Ekipman Zimmet" sequence="10" web_icon="equipment_custody,static/description/icon.png"/>
+    <menuitem id="menu_custody_requests" name="Zimmet Talepleri" parent="menu_custody_root" action="action_custody_request" sequence="10"/>
+    <menuitem id="menu_custody_equipments" name="Ekipmanlar" parent="menu_custody_root" action="action_custody_equipment" sequence="20"/>
+</odoo>
